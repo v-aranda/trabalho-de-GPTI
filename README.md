@@ -1,3 +1,5 @@
+apresentação: https://v-aranda.github.io/trabalho-de-GPTI/
+
 **(A1 - Seção: Introdução ao LeSS)**
 
 ### Seção 1: O LeSS: Origem e Motivações
