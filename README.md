@@ -1,24 +1,4 @@
-Com certeza! Preparei um script de falas detalhado para três pessoas, utilizando a página web como base da apresentação. Dividi as seções de forma que cada apresentador tenha um papel claro e a transição entre eles seja suave.
-
----
-
-## Script de Apresentação: Explorando o LeSS
-
-**Participantes:**
-* **Apresentador 1 (A1):** Introdução, Origem e Motivações do LeSS.
-* **Apresentador 2 (A2):** LeSS vs. Scrum, Princípios Fundamentais.
-* **Apresentador 3 (A3):** Estrutura e Aplicação, Vantagens e Desvantagens, Conclusão.
-
----
-
-### Início da Apresentação
-
 **(A1 - Seção: Introdução ao LeSS)**
-
-* **A1:** "Olá a todos! Sejam muito bem-vindos à nossa apresentação interativa sobre o **LeSS, o Large-Scale Scrum**. Hoje, nosso objetivo é explorar este poderoso framework, que foi concebido para escalar a agilidade em grandes organizações, sempre com um foco primordial na simplicidade e na entrega contínua de valor."
-* **(A1 clica no botão "Começar" ou rola a página para a próxima seção)**
-
----
 
 ### Seção 1: O LeSS: Origem e Motivações
 
@@ -62,17 +42,3 @@ Com certeza! Preparei um script de falas detalhado para três pessoas, utilizand
 * **(A3 - Seção: Conclusão)**
 * **A3:** "Para finalizar nossa apresentação, chegamos à **Conclusão: Avaliando a Aplicabilidade do LeSS**. Reforçamos que o LeSS é uma extensão robusta do Scrum para grandes projetos, priorizando simplicidade, transparência e a entrega contínua de valor."
 * **A3:** "Seu sucesso, no entanto, está intrinsecamente ligado à capacidade de adaptação cultural da sua organização e ao comprometimento de todas as equipes e da liderança com os princípios ágeis. Convidamos vocês a refletir se os desafios que o LeSS apresenta podem ser superados em seu contexto e se suas vantagens se alinham estrategicamente aos seus objetivos."
-
----
-
-### Encerramento
-
-**(A1, A2 e A3 podem se juntar para o encerramento, ou A1 pode finalizar)**
-
-* **A1:** "Agradecemos a todos pela atenção e por explorarem o LeSS conosco hoje. Esperamos que esta apresentação interativa tenha fornecido insights valiosos sobre como escalar a agilidade em suas organizações."
-* **A2:** "Se tiverem dúvidas, estamos à disposição para debatê-las. Lembrem-se que o caminho para a agilidade em escala é contínuo e demanda aprendizado."
-* **A3:** "Muito obrigado!"
-
----
-
-Este script fornece uma estrutura clara, permite a interação com a página web e mantém um tom de apresentação adequado, incorporando a explicação sobre LeSS vs. Scrum. Lembrem-se de praticar as transições e a navegação para que a apresentação seja fluida.
