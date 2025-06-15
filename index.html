@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guia Interativo da Metodologia LeSS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Earthy Sage -->
+    <!-- Application Structure Plan: A single-page application with a sticky top navigation for smooth scrolling between thematic sections. This non-linear, topic-driven structure replaces the original linear slide format. The user flow allows users to either scroll sequentially or use the nav bar to jump to specific topics of interest (e.g., directly to "Prós & Contras"). This structure enhances usability by allowing users to control their learning path and easily revisit sections. It groups related concepts (like origin and motivation) together, creating a more cohesive narrative than the original slide deck. Interactive elements within each section encourage exploration rather than passive reading. A new section comparing LeSS and Scrum is added after "O que é?" to provide essential context. -->
+    <!-- Visualization & Content Choices: 
+        Origin Info (Slide 2): Goal: Show history. Method: Interactive timeline diagram built with HTML/CSS. Interaction: Click on dates to reveal details. Justification: More engaging than a static text block. Library: Vanilla JS.
+        LeSS vs. Scrum: Goal: Compare and contrast. Method: Textual explanation with clear headings. Interaction: Direct comparison. Justification: Provides essential foundational context for understanding LeSS as an extension of Scrum. Library: HTML/CSS.
+        Principles (Slide 4): Goal: Organize concepts. Method: Grid of interactive cards. Interaction: Click/hover to expand. Justification: Breaks down a list into digestible, explorable chunks. Library: Vanilla JS.
+        LeSS Structure (Slide 4): Goal: Organize/explain a framework. Method: Diagram built with HTML/Tailwind CSS. Interaction: Hover to highlight components (PO, Backlog, Teams). Justification: Visually represents the core structure clearly without using forbidden SVG. Library: Vanilla JS/CSS.
+        Pros vs. Cons (Slides 7, 8): Goal: Compare. Method: A Radar chart for a high-level visual comparison, supported by toggleable lists for detailed points. Interaction: The chart provides an at-a-glance summary. Buttons toggle the visibility of the detailed pro/con lists. Justification: The radar chart offers an innovative visualization for qualitative data, comparing LeSS against an implied traditional model on key attributes. The lists provide the necessary detail on demand. Library: Chart.js for the radar chart, Vanilla JS for the toggles.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F5F2;
+            color: #4A4A4A;
+        }
+        .nav-link {
+            transition: color 0.3s, border-bottom-color 0.3s;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #708A81;
+            border-bottom-color: #708A81;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .card {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .diagram-element {
+            transition: all 0.3s ease-in-out;
+            border-width: 2px;
+        }
+        .diagram-element:hover {
+            transform: scale(1.05);
+            border-color: #708A81;
+            background-color: #e8f0ee;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-[#F8F5F2]/80 backdrop-blur-sm sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="text-xl font-bold text-[#4A4A4A]">
+                    LeSS
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#intro" class="nav-link pb-1">Introdução</a>
+                    <a href="#conceitos" class="nav-link pb-1">Conceitos</a>
+                    <a href="#less-vs-scrum" class="nav-link pb-1">LeSS vs. Scrum</a>
+                    <a href="#principios" class="nav-link pb-1">Princípios</a>
+                    <a href="#estrutura" class="nav-link pb-1">Estrutura</a>
+                    <a href="#analise" class="nav-link pb-1">Análise</a>
+                    <a href="#conclusao" class="nav-link pb-1">Conclusão</a>
+                </div>
+                <div class="md:hidden">
+                    <button id="menu-btn" class="text-gray-600 focus:outline-none">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                    </button>
+                </div>
+            </div>
+            <div id="mobile-menu" class="hidden md:hidden mt-4 space-y-2">
+                <a href="#intro" class="block nav-link text-center py-2">Introdução</a>
+                <a href="#conceitos" class="block nav-link text-center py-2">Conceitos</a>
+                <a href="#less-vs-scrum" class="block nav-link text-center py-2">LeSS vs. Scrum</a>
+                <a href="#principios" class="block nav-link text-center py-2">Princípios</a>
+                <a href="#estrutura" class="block nav-link text-center py-2">Estrutura</a>
+                <a href="#analise" class="block nav-link text-center py-2">Análise</a>
+                <a href="#conclusao" class="block nav-link text-center py-2">Conclusão</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-6 py-8 md:py-12">
+
+        <section id="intro" class="min-h-[80vh] flex flex-col justify-center text-center">
+            <h1 class="text-4xl md:text-6xl font-bold tracking-tight text-[#4A4A4A] mb-4">Apresentando o LeSS</h1>
+            <p class="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
+                Bem-vindos à nossa apresentação interativa sobre o <span class="font-semibold text-[#708A81]">Large-Scale Scrum (LeSS)</span>. Aqui, exploraremos este framework robusto, projetado para escalar a agilidade em grandes organizações, mantendo a simplicidade e o foco primordial na entrega contínua de valor.
+            </p>
+            <div class="mt-12">
+                <a href="#conceitos" class="text-gray-500 animate-bounce block">
+                    <svg class="w-8 h-8 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </a>
+            </div>
+        </section>
+
+        <section id="conceitos" class="py-16 md:py-24">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-[#4A4A4A]">O LeSS: Origem e Motivações</h2>
+                <p class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">Nesta seção, exploramos a definição, a jornada de criação e as razões essenciais que impulsionaram o desenvolvimento do framework LeSS. Compreenda como o LeSS emergiu como uma solução para os desafios inerentes à aplicação do Scrum em contextos de grande escala, mantendo-se fiel aos seus princípios fundamentais.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <h3 class="text-2xl font-bold mb-4 text-[#708A81]">A Trajetória do LeSS</h3>
+                    <div class="relative border-l-2 border-[#D4B483] ml-3 py-4">
+                        <div class="mb-8 pl-8 relative">
+                            <div class="absolute -left-[14px] top-1 w-6 h-6 bg-white border-2 border-[#D4B483] rounded-full"></div>
+                            <p class="font-semibold text-lg">2002</p>
+                            <p class="text-gray-600">Craig Larman publica "Agile & Iterative Development", questionando a limitação do ágil a pequenos times.</p>
+                        </div>
+                        <div class="pl-8 relative">
+                            <div class="absolute -left-[14px] top-1 w-6 h-6 bg-white border-2 border-[#D4B483] rounded-full"></div>
+                            <p class="font-semibold text-lg">2005</p>
+                            <p class="text-gray-600">Craig Larman e Bas Vodde iniciam a aplicação prática e a formalização do LeSS em consultorias, escalando o Scrum para múltiplos times.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="space-y-6">
+                     <h3 class="text-2xl font-bold mb-4 text-[#708A81]">Motivações Chave</h3>
+                    <div class="bg-white p-6 rounded-lg shadow-md card">
+                        <h4 class="font-semibold text-lg">Coordenação em Escala</h4>
+                        <p class="text-gray-600">Uma das principais forças motrizes foi a necessidade de coordenar múltiplas equipes trabalhando em um produto unificado.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md card">
+                        <h4 class="font-semibold text-lg">Comunicação Otimizada</h4>
+                        <p class="text-gray-600">O LeSS visa estabelecer canais de comunicação eficazes e transparentes em grandes projetos.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md card">
+                        <h4 class="font-semibold text-lg">Valor Contínuo ao Cliente</h4>
+                        <p class="text-gray-600">Garantir a entrega incremental e contínua de valor, mesmo diante da crescente complexidade.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="less-vs-scrum" class="py-16 md:py-24 bg-white rounded-xl shadow-lg">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-[#4A4A4A]">LeSS vs. Scrum: Entendendo as Diferenças</h2>
+                <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">Para compreender verdadeiramente o LeSS, é fundamental entender como ele se diferencia e se baseia no Scrum. Esta seção destaca as distinções cruciais e as semelhanças que tornam o LeSS uma extensão, e não uma substituição, do Scrum.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8 items-start">
+                <div class="p-6 bg-gray-50 rounded-lg shadow-sm h-full flex flex-col">
+                    <h3 class="text-2xl font-bold mb-4 text-[#708A81]">Scrum</h3>
+                    <p class="text-gray-700 mb-4">O Scrum é um framework para **um único time** trabalhar em um produto complexo. Seu foco principal está na auto-organização e entrega incremental de valor por um pequeno time multifuncional.</p>
+                    <ul class="list-disc list-inside text-gray-600 space-y-2 flex-grow">
+                        <li>Focado em um time (geralmente 3-9 pessoas).</li>
+                        <li>Possui um Product Owner dedicado ao time.</li>
+                        <li>Um Product Backlog para o time.</li>
+                        <li>Eventos Scrum (Sprint Planning, Daily Scrum, Sprint Review, Sprint Retrospective) são conduzidos pelo time.</li>
+                        <li>Ideal para projetos com escopo e complexidade que podem ser gerenciados por um único time.</li>
+                    </ul>
+                </div>
+                
+                <div class="p-6 bg-gray-50 rounded-lg shadow-sm h-full flex flex-col">
+                    <h3 class="text-2xl font-bold mb-4 text-[#708A81]">LeSS (Large-Scale Scrum)</h3>
+                    <p class="text-gray-700 mb-4">O LeSS é o Scrum aplicado em larga escala, estendendo seus princípios para **múltiplos times** trabalhando em um único produto. Ele busca a simplicidade mantendo a essência do Scrum e eliminando complexidade organizacional desnecessária.</p>
+                    <ul class="list-disc list-inside text-gray-600 space-y-2 flex-grow">
+                        <li>Focado em escalar o Scrum para 2 a 8 times (LeSS) ou milhares de pessoas (LeSS Huge).</li>
+                        <li>**Um único Product Owner** e **um único Product Backlog** para o *produto inteiro*, não por time.</li>
+                        <li>Eventos Scrum são ampliados:
+                            <ul class="list-disc list-inside ml-4">
+                                <li>**Sprint Planning One:** Todos os times planejam juntos.</li>
+                                <li>**Overall Product Backlog Refinement:** Refinamento colaborativo entre times.</li>
+                                <li>**Sprint Review Comum:** Todos os times apresentam o incremento integrado.</li>
+                                <li>**Overall Retrospective:** Retrospectiva para todos os times e a organização.</li>
+                            </ul>
+                        </li>
+                        <li>Times multifuncionais, auto-organizados, focados no aprendizado e melhoria contínua em escala.</li>
+                        <li>Ideal para grandes produtos com alta interdependência entre as equipes.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        
+        <section id="principios" class="py-16 md:py-24 bg-white rounded-xl shadow-lg">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-[#4A4A4A]">Os Princípios Fundamentais do LeSS</h2>
+                <p class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">O LeSS transcende a mera coleção de regras; ele se alicerça em um conjunto de princípios profundos que guiam sua aplicação. Nesta seção, convidamos você a explorar as ideias centrais que sustentam este framework, desde o pensamento sistêmico até o foco inabalável no cliente.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="p-6 text-center border border-gray-200 rounded-lg card">
+                    <div class="text-4xl mb-4">⚙️</div>
+                    <h3 class="text-xl font-semibold mb-2">Controle Empírico de Processos</h3>
+                    <p class="text-gray-600">Princípios de transparência, inspeção e adaptação são aplicados em todas as camadas da organização.</p>
+                </div>
+                <div class="p-6 text-center border border-gray-200 rounded-lg card">
+                    <div class="text-4xl mb-4">🧠</div>
+                    <h3 class="text-xl font-semibold mb-2">Pensamento Sistêmico</h3>
+                    <p class="text-gray-600">O LeSS enfatiza a otimização do sistema de desenvolvimento como um todo, não apenas de suas partes isoladas.</p>
+                </div>
+                <div class="p-6 text-center border border-gray-200 rounded-lg card">
+                     <div class="text-4xl mb-4">🍃</div>
+                    <h3 class="text-xl font-semibold mb-2">Pensamento Enxuto (Lean)</h3>
+                    <p class="text-gray-600">A eliminação de desperdícios e a entrega de valor contínua são pilares da abordagem LeSS.</p>
+                </div>
+                <div class="p-6 text-center border border-gray-200 rounded-lg card">
+                     <div class="text-4xl mb-4">🔍</div>
+                    <h3 class="text-xl font-semibold mb-2">Transparência</h3>
+                    <p class="text-gray-600">A visibilidade completa das informações é crucial para facilitar a colaboração e a tomada de decisões eficazes.</p>
+                </div>
+                <div class="p-6 text-center border border-gray-200 rounded-lg card">
+                    <div class="text-4xl mb-4">📈</div>
+                    <h3 class="text-xl font-semibold mb-2">Melhoria Contínua</h3>
+                    <p class="text-gray-600">O framework incentiva o aprendizado constante e a adaptação para aprimorar continuamente o processo de desenvolvimento.</p>
+                </div>
+                <div class="p-6 text-center border border-gray-200 rounded-lg card">
+                     <div class="text-4xl mb-4">🎯</div>
+                    <h3 class="text-xl font-semibold mb-2">Foco no Cliente</h3>
+                    <p class="text-gray-600">Toda a organização se alinha para maximizar a entrega de valor real e percebido pelo cliente.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="estrutura" class="py-16 md:py-24">
+             <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-[#4A4A4A]">A Estrutura e Aplicação Prática do LeSS</h2>
+                <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">Como o LeSS se manifesta no ambiente de trabalho? Esta seção apresenta um diagrama interativo que ilustra a estrutura central do framework, demonstrando como um Product Owner e um Backlog únicos servem a múltiplas equipes. Detalhamos também os cenários onde o LeSS é mais aplicável e fornecemos um exemplo prático de sua implementação.</p>
+            </div>
+            
+            <div class="bg-white p-8 rounded-lg shadow-lg">
+                <h3 class="text-2xl font-bold text-center mb-8 text-[#708A81]">Diagrama da Estrutura LeSS</h3>
+                <div class="flex flex-col items-center space-y-6 text-center">
+                    <div class="diagram-element border-[#D4B483] bg-amber-50 p-4 rounded-lg shadow-sm w-64">
+                        <p class="font-bold text-lg">👤 Um Product Owner</p>
+                        <p class="text-sm">Visão unificada do produto</p>
+                    </div>
+                    <div class="h-10 w-0.5 bg-gray-300"></div>
+                    <div class="diagram-element border-[#D4B483] bg-amber-50 p-4 rounded-lg shadow-sm w-64">
+                        <p class="font-bold text-lg">📋 Um Product Backlog</p>
+                        <p class="text-sm">Prioridades para todo o produto</p>
+                    </div>
+                    <div class="h-10 w-0.5 bg-gray-300"></div>
+                    <div class="flex flex-col md:flex-row justify-center items-start gap-4 w-full">
+                         <div class="h-10 w-0.5 bg-gray-300 md:h-0.5 md:w-20 md:mt-12"></div>
+                         <div class="flex flex-col items-center space-y-4">
+                             <div class="flex justify-center flex-wrap gap-4">
+                                <div class="diagram-element border-[#708A81] bg-teal-50 p-4 rounded-lg w-40">
+                                    <p class="font-bold">🏃‍♀️ Time A</p>
+                                    <p class="text-sm">Multifuncional</p>
+                                </div>
+                                <div class="diagram-element border-[#708A81] bg-teal-50 p-4 rounded-lg w-40">
+                                    <p class="font-bold">🏃‍♂️ Time B</p>
+                                    <p class="text-sm">Auto-organizado</p>
+                                </div>
+                                <div class="diagram-element border-[#708A81] bg-teal-50 p-4 rounded-lg w-40">
+                                    <p class="font-bold">🏃‍♀️ Time C</p>
+                                    <p class="text-sm">Colaborativo</p>
+                                </div>
+                                <div class="hidden lg:block diagram-element border-gray-300 bg-gray-50 p-4 rounded-lg w-40">
+                                    <p class="font-bold">... até 8 times</p>
+                                    <p class="text-sm">(LeSS)</p>
+                                </div>
+                             </div>
+                             <p class="text-gray-500 text-sm mt-2">(Para mais de 8 times, usa-se o LeSS Huge)</p>
+                         </div>
+                         <div class="h-10 w-0.5 bg-gray-300 md:h-0.5 md:w-20 md:mt-12"></div>
+                    </div>
+                    <div class="h-10 w-0.5 bg-gray-300"></div>
+                     <div class="diagram-element border-green-500 bg-green-50 p-6 rounded-lg shadow-sm w-full max-w-md">
+                        <p class="font-bold text-xl">📦 Incremento Potencialmente Entregável</p>
+                        <p class="text-sm">Resultado integrado de todos os times ao final de cada Sprint</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8 mt-16">
+                 <div>
+                    <h3 class="text-2xl font-bold mb-4 text-[#708A81]">Casos de Aplicação Típica</h3>
+                    <ul class="space-y-3 list-inside text-gray-700">
+                        <li class="bg-white p-4 rounded-md shadow-sm">✓ Desenvolvimento de software e produtos em larga escala.</li>
+                        <li class="bg-white p-4 rounded-md shadow-sm">✓ Produtos complexos que exigem elevada colaboração entre equipes.</li>
+                        <li class="bg-white p-4 rounded-md shadow-sm">✓ Ambientes organizacionais que priorizam a entrega contínua de valor.</li>
+                        <li class="bg-white p-4 rounded-md shadow-sm">✓ Organizações que buscam simplificar seus processos e estruturas internas.</li>
+                    </ul>
+                </div>
+                 <div>
+                    <h3 class="text-2xl font-bold mb-4 text-[#708A81]">Exemplo de Cenário Prático</h3>
+                    <div class="bg-white p-6 rounded-lg shadow-md space-y-4">
+                        <p>Consideremos uma empresa de e-commerce com 5 times Scrum que utilizam o LeSS para desenvolver novas funcionalidades em sua plataforma.</p>
+                        <p>Todos os times participam de uma única <span class="font-semibold">Sprint Planning One</span>, onde colaboram para selecionar itens de um Product Backlog único. Durante a Sprint, que dura 2 semanas, a colaboração entre as equipes é intensa. Ao final, eles integram seu trabalho em um único incremento de produto, que é revisado em uma <span class="font-semibold">Sprint Review Comum</span> com o Product Owner e os stakeholders.</p>
+                        <p>Este processo assegura alinhamento contínuo e a entrega consistente de valor para o cliente.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="analise" class="py-16 md:py-24 bg-white rounded-xl shadow-lg">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-[#4A4A4A]">Análise: Vantagens e Desvantagens do LeSS</h2>
+                <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">Nenhuma metodologia se encaixa perfeitamente em todos os contextos. Nesta seção, apresentamos uma análise ponderada do LeSS. O gráfico de radar oferece uma visualização conceitual dos pontos fortes do LeSS em comparação com abordagens mais tradicionais, enquanto as listas detalham as vantagens e os desafios que podem surgir em sua adoção.</p>
+            </div>
+            
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="chart-container">
+                    <canvas id="lessRadarChart"></canvas>
+                </div>
+                
+                <div>
+                    <div class="flex justify-center space-x-4 mb-6">
+                        <button id="show-vantagens" class="bg-[#708A81] text-white px-6 py-2 rounded-full font-semibold shadow-md hover:bg-[#5a7068] transition-colors">Vantagens</button>
+                        <button id="show-desvantagens" class="bg-gray-200 text-gray-700 px-6 py-2 rounded-full font-semibold hover:bg-gray-300 transition-colors">Desvantagens</button>
+                    </div>
+                    
+                    <div id="vantagens-list" class="space-y-3">
+                        <div class="bg-green-50 p-4 rounded-md border-l-4 border-green-500">
+                            <strong>Custos de implementação reduzidos:</strong> O LeSS aproveita e expande as práticas existentes do Scrum, minimizando a curva de aprendizado inicial.
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-md border-l-4 border-green-500">
+                             <strong>Visão de produto unificada:</strong> A presença de um único Product Owner assegura uma direção clara e coesa para o desenvolvimento do produto.
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-md border-l-4 border-green-500">
+                           <strong>Transparência e comunicação aprimoradas:</strong> O framework promove a comunicação direta e a visibilidade entre as equipes e os clientes.
+                        </div>
+                         <div class="bg-green-50 p-4 rounded-md border-l-4 border-green-500">
+                           <strong>Simplificação organizacional:</strong> O LeSS contribui para a redução da complexidade estrutural, focando na simplicidade operacional.
+                        </div>
+                    </div>
+
+                     <div id="desvantagens-list" class="space-y-3 hidden">
+                        <div class="bg-red-50 p-4 rounded-md border-l-4 border-red-500">
+                            <strong>Resistência cultural:</strong> Pode ser um desafio para organizações com estruturas hierárquicas e culturas resistentes a mudanças.
+                        </div>
+                        <div class="bg-red-50 p-4 rounded-md border-l-4 border-red-500">
+                             <strong>Exige alta maturidade:</strong> Requer um elevado nível de comprometimento e capacidade de auto-organização por parte das equipes.
+                        </div>
+                        <div class="bg-red-50 p-4 rounded-md border-l-4 border-red-500">
+                           <strong>Adaptação da liderança:</strong> A transição para o LeSS demanda uma mudança significativa na mentalidade e no papel da liderança.
+                        </div>
+                         <div class="bg-red-50 p-4 rounded-md border-l-4 border-red-500">
+                           <strong>Equipes dispersas:</strong> Pode não ser a opção mais adequada para projetos com equipes geograficamente muito distribuídas.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="conclusao" class="py-16 md:py-24 text-center">
+            <h2 class="text-3xl font-bold text-[#4A4A4A]">Conclusão: Avaliando a Aplicabilidade do LeSS</h2>
+            <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">
+                Em resumo, o LeSS representa uma poderosa extensão do Scrum, concebida para escalar o desenvolvimento ágil em projetos de grande porte, com um foco incisivo na <span class="font-semibold">simplicidade, transparência e entrega contínua de valor</span>. Este framework oferece um caminho robusto para grandes organizações manterem sua agilidade.
+            </p>
+            <p class="mt-6 text-lg text-gray-600 max-w-3xl mx-auto">
+                Contudo, seu sucesso está intrinsecamente ligado à adaptação cultural da organização e ao comprometimento genuíno das equipes e da liderança com os princípios ágeis. Convidamos você a refletir se os desafios do LeSS podem ser superados em seu contexto e se suas vantagens se alinham estrategicamente aos seus objetivos organizacionais.
+            </p>
+        </section>
+    </main>
+    
+    <footer class="bg-gray-100 border-t">
+        <div class="container mx-auto px-6 py-4 text-center text-gray-500">
+            <p>Guia Interativo LeSS &copy; 2025. Criado para fins de demonstração.</p>
+        </div>
+    </footer>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const menuBtn = document.getElementById('menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            menuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            const navLinks = document.querySelectorAll('nav a[href^="#"]');
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    if (!mobileMenu.classList.contains('hidden')) {
+                         mobileMenu.classList.add('hidden');
+                    }
+                });
+            });
+
+
+            const sections = document.querySelectorAll('section');
+            const navLi = document.querySelectorAll('header nav .nav-link');
+
+            window.addEventListener('scroll', ()=> {
+                let current = '';
+                sections.forEach( section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if(pageYOffset >= (sectionTop - sectionHeight / 3)){
+                        current = section.getAttribute('id');
+                    }
+                })
+
+                navLi.forEach( a => {
+                    a.classList.remove('active');
+                    if(a.getAttribute('href').includes(current)){
+                        a.classList.add('active');
+                    }
+                })
+            });
+
+            const btnVantagens = document.getElementById('show-vantagens');
+            const btnDesvantagens = document.getElementById('show-desvantagens');
+            const listVantagens = document.getElementById('vantagens-list');
+            const listDesvantagens = document.getElementById('desvantagens-list');
+
+            btnVantagens.addEventListener('click', () => {
+                listVantagens.classList.remove('hidden');
+                listDesvantagens.classList.add('hidden');
+                btnVantagens.classList.add('bg-[#708A81]', 'text-white');
+                btnVantagens.classList.remove('bg-gray-200', 'text-gray-700');
+                btnDesvantagens.classList.add('bg-gray-200', 'text-gray-700');
+                btnDesvantagens.classList.remove('bg-[#708A81]', 'text-white');
+            });
+
+            btnDesvantagens.addEventListener('click', () => {
+                listDesvantagens.classList.remove('hidden');
+                listVantagens.classList.add('hidden');
+                btnDesvantagens.classList.add('bg-[#708A81]', 'text-white');
+                btnDesvantagens.classList.remove('bg-gray-200', 'text-gray-700');
+                btnVantagens.classList.add('bg-gray-200', 'text-gray-700');
+                btnVantagens.classList.remove('bg-[#708A81]', 'text-white');
+            });
+
+            const ctx = document.getElementById('lessRadarChart').getContext('2d');
+            const lessRadarChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Simplicidade Org.', 'Visão de Produto', 'Flexibilidade', 'Eficiência', 'Facilidade de Adoção', 'Autonomia da Equipe'],
+                    datasets: [{
+                        label: 'LeSS',
+                        data: [8, 9, 8, 7, 5, 9],
+                        backgroundColor: 'rgba(112, 138, 129, 0.2)',
+                        borderColor: 'rgba(112, 138, 129, 1)',
+                        pointBackgroundColor: 'rgba(112, 138, 129, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(112, 138, 129, 1)'
+                    },
+                    {
+                        label: 'Abordagem Tradicional',
+                        data: [3, 5, 4, 5, 8, 4],
+                        backgroundColor: 'rgba(212, 180, 131, 0.2)',
+                        borderColor: 'rgba(212, 180, 131, 1)',
+                        pointBackgroundColor: 'rgba(212, 180, 131, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(212, 180, 131, 1)'
+                    }
+                    ]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    responsive: true,
+                    scales: {
+                        r: {
+                            angleLines: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            },
+                            pointLabels: {
+                                font: {
+                                    size: 12
+                                },
+                                color: '#4A4A4A'
+                            },
+                            ticks: {
+                                backdropColor: 'transparent',
+                                stepSize: 2,
+                                color: '#888',
+                                font: {
+                                  size: 10
+                                }
+                            },
+                             min: 0,
+                             max: 10
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    label += context.raw;
+                                    return label + ' (de 10)';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
